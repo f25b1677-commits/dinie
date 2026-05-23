@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Broiler Growth Rate Derivative Tool - Malaysia Animal Husbandry</title>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Tailwind CSS for clean modern layout styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+        <!-- Header Banner -->
+        <div class="bg-emerald-700 text-white p-6">
+            <span class="text-xs font-semibold tracking-wider bg-emerald-800 px-3 py-1 rounded-full uppercase">Malaysia Animal Husbandry Technology</span>
+            <h1 class="text-2xl md:text-3xl font-bold mt-2">Broiler Growth Dynamics & Calculus Derivatives</h1>
+            <p class="text-emerald-100 text-sm mt-1">Applying $f'(x)$ to optimize poultry harvest cycles and feeding regimes.</p>
+        </div>
+
+        <div class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left Panel: Formulas and Scenario Explanations -->
+            <div class="lg:col-span-1 space-y-6">
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <h2 class="text-lg font-semibold text-emerald-800 mb-2">The Biological Problem</h2>
+                    <p class="text-sm text-gray-600 leading-relaxed">
+                        In commercial closed-house systems across Malaysia, monitoring daily weight variations helps producers benchmark performance against reference targets. Instead of tracking broad weekly averages, **calculus derivatives** allow us to compute the precise daily speed of mass accumulation.
+                    </p>
+                </div>
+
+                <!-- Mathematical Models -->
+                <div class="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
+                    <h2 class="text-lg font-semibold text-emerald-900 mb-3">Mathematical Models</h2>
+                    
+                    <div class="mb-4">
+                        <span class="block text-xs font-bold text-emerald-700 uppercase">Growth Curve Function:</span>
+                        <div class="bg-white p-2 rounded text-center font-mono text-sm border border-emerald-100 my-1">
+                            <strong>f(x) = 2800 / (1 + e<sup>-0.16(x - 26)</sup>)</strong>
+                        </div>
+                        <p class="text-xs text-gray-500">Models cumulative broiler weight (grams) over time $x$ (days).</p>
+                    </div>
+
+                    <div>
+                        <span class="block text-xs font-bold text-emerald-700 uppercase">First Derivative (Growth Rate):</span>
+                        <div class="bg-white p-2 rounded text-center font-mono text-sm border border-emerald-100 my-1">
+                            <strong>f'(x) = 448 &middot; e<sup>-0.16(x - 26)</sup> / (1 + e<sup>-0.16(x - 26)</sup>)<sup>2</sup></strong>
+                        </div>
+                        <p class="text-xs text-gray-500">Derived using the quotient/chain rule; calculates weight gain velocity (g/day).</p>
+                    </div>
+                </div>
+
+                <!-- References -->
+                <div class="text-xs text-gray-500 space-y-1">
+                    <span class="font-semibold block uppercase tracking-wider text-gray-400 text-[10px]">Data References:</span>
+                    <p>• Baseline growth metrics aligned with <em>Cobb 500 Broiler Performance Supplement Standards</em>.</p>
+                    <p>• Production cycle timelines calibrated to typical hot-humid closed-house operations recorded by the <em>Department of Veterinary Services (DVS) Malaysia (dvs.gov.my)</em>.</p>
+                </div>
+            </div>
+
+            <!-- Right Panel: Interactive Chart & Dynamic Calculations -->
+            <div class="lg:col-span-2 flex flex-col justify-between space-y-6">
+                
+                <!-- Chart Area -->
+                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm relative h-80 md:h-96">
+                    <p class="text-xs text-center text-gray-400 mb-1 font-medium">💡 Click anywhere directly on the graph line to inspect the derivative values at that day.</p>
+                    <canvas id="growthChart"></canvas>
+                </div>
+
+                <!-- Interactive Display Output (Changes on Chart Click) -->
+                <div id="resultPanel" class="bg-gradient-to-r from-gray-800 to-slate-950 text-white p-5 rounded-lg transition-all duration-300 shadow-inner">
+                    <div id="initialPrompt" class="text-center py-4">
+                        <p class="text-emerald-400 font-medium">Interactive Real-time Calculations</p>
+                        <p class="text-xs text-gray-400 mt-1">Click a data point along the curve above to view how structural mass acceleration behaves.</p>
+                    </div>
+                    
+                    <div id="calculationContent" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <div class="border-b md:border-b-0 md:border-r border-gray-700 pb-3 md:pb-0 md:pr-4">
+                            <span class="text-xs text-gray-400 block uppercase">Timeline Position</span>
+                            <span id="outDay" class="text-2xl font-bold text-emerald-400">Day --</span>
+                        </div>
+                        <div class="border-b md:border-b-0 md:border-r border-gray-700 pb-3 md:pb-0 md:pr-4">
+                            <span class="text-xs text-gray-400 block uppercase">Total Structural Weight f(x)</span>
+                            <span id="outWeight" class="text-2xl font-bold text-white">-- g</span>
+                        </div>
+                        <div>
+                            <span class="text-xs text-gray-400 block uppercase">Instantaneous Rate f'(x)</span>
+                            <span id="outDerivative" class="text-2xl font-bold text-yellow-400">-- g/day</span>
+                        </div>
+                        <div class="col-span-1 md:col-span-3 mt-2 bg-gray-900 bg-opacity-40 p-3 rounded border border-gray-800">
+                            <span class="text-[11px] text-emerald-500 font-bold block uppercase tracking-wider">Layman Insight for Farm Management:</span>
+                            <p id="outExplanation" class="text-xs text-gray-300 mt-0.5 leading-relaxed">Select a point to display strategic agricultural reasoning.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Logic Implementation -->
+    <script>
+        // Generate dataset arrays for Day 0 to Day 42
+        const labels = [];
+        const weightData = [];
+        const derivativeData = [];
+
+        // Mathematical constants representing the Cobb 500 sigmoidal asymptotic threshold
+        const L = 2800;    // Maximum theoretical ceiling weight in grams
+        const k = 0.16;    // Growth acceleration coefficient factor
+        const x0 = 26;     // Inflection point coordinate (Day of maximum growth velocity)
+
+        for (let x = 0; x <= 42; x++) {
+            labels.push(x);
+            
+            // Logistical function: f(x)
+            const exponent = -k * (x - x0);
+            const eTerm = Math.exp(exponent);
+            const fx = L / (1 + eTerm);
+            weightData.push(parseFloat(fx.toFixed(1)));
+
+            // Calculated Derivative function: f'(x)
+            const fPrimeX = (L * k * eTerm) / Math.pow(1 + eTerm, 2);
+            derivativeData.push(parseFloat(fPrimeX.toFixed(1)));
+        }
+
+        // Initialize Canvas Context
+        const ctx = document.getElementById('growthChart').getContext('2d');
+        
+        const growthChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Broiler Mass f(x) [Grams]',
+                        data: weightData,
+                        borderColor: '#047857', // Emerald 700
+                        backgroundColor: 'rgba(4, 120, 87, 0.05)',
+                        borderWidth: 3,
+                        yAxisID: 'yMass',
+                        tension: 0.2,
+                        pointBackgroundColor: '#047857',
+                        pointHoverRadius: 7
+                    },
+                    {
+                        label: "Growth Velocity f'(x) [g/day]",
+                        data: derivativeData,
+                        borderColor: '#eab308', // Yellow 500
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        yAxisID: 'yRate',
+                        tension: 0.2,
+                        pointBackgroundColor: '#eab308',
+                        pointHoverRadius: 7
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Age of Broiler Flocks (Days)',
+                            font: { weight: 'bold' }
+                        },
+                        grid: { display: false }
+                    },
+                    yMass: {
+                        type: 'linear',
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Cumulative Weight (g)',
+                            font: { weight: 'bold' }
+                        },
+                        min: 0,
+                        max: 3000
+                    },
+                    yRate: {
+                        type: 'linear',
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Velocity Rate (g/day)',
+                            font: { weight: 'bold' }
+                        },
+                        min: 0,
+                        max: 130,
+                        grid: { drawOnChartArea: false } // Avoid overlapping horizontal lines
+                    }
+                },
+                // Interactivity settings via chart point clicks
+                onClick: (event, activeElements) => {
+                    if (activeElements && activeElements.length > 0) {
+                        const index = activeElements[0].index;
+                        updateDerivativeReadout(index);
+                    }
+                }
+            }
+        });
+
+        // Compute and show agricultural interpretations based on the value of the derivative f'(x)
+        function updateDerivativeReadout(day) {
+            const currentWeight = weightData[day];
+            const currentRate = derivativeData[day];
+
+            // UI Manipulation elements
+            document.getElementById('initialPrompt').classList.add('hidden');
+            document.getElementById('calculationContent').classList.remove('hidden');
+
+            document.getElementById('outDay').innerText = `Day ${day}`;
+            document.getElementById('outWeight').innerText = `${currentWeight} g`;
+            document.getElementById('outDerivative').innerText = `${currentRate} g/day`;
+
+            let insight = "";
+
+            // Layman bioscience logic branching depending on derivative values
+            if (day <= 14) {
+                insight = `The derivative value is low (${currentRate} g/day). At this juvenile phase, energy intake is mostly routed towards skeletal framing and organogenesis rather than tissue mass. Keep temperature controlled strictly.`;
+            } else if (day > 14 && day < 26) {
+                insight = `The derivative is climbing steadily! Acceleration is positive (f''(x) > 0). Birds are processing feed into breast meat muscle tissue rapidly. Maximize feed accessibility now.`;
+            } else if (day === 26) {
+                insight = `Inflection Point Reached! The derivative hits its maximum efficiency peak at exactly ${currentRate} g/day. From here forward, growth velocity will begin to decelerate, even though absolute weight continues to rise.`;
+            } else if (day > 26 && day <= 35) {
+                insight = `Growth speed is slowing down gently (${currentRate} g/day). Metabolic maintenance needs are growing larger relative to feed intake. Watch your Feed Conversion Ratio closely.`;
+            } else {
+                insight = `The derivative has dropped sharply to ${currentRate} g/day. The growth curve is flattening. Keeping the flock past this point decreases profitability because feed costs outweigh tissue gain velocity. Ideal commercial harvest window.`;
+            }
+
+            document.getElementById('outExplanation').innerText = insight;
+        }
+    </script>
+</body>
+</html>
